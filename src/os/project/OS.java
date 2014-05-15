@@ -51,11 +51,7 @@ public class OS
 		}
 		memSplit(sizeOfJob);
 		//call to swapper to swap job drum->mem 
-		}else
-		{
-			//choose algorithm to replace job
-			
-		}
+		
 	}
 	
 	void cpuSchedule()
