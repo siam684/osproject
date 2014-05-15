@@ -58,13 +58,12 @@ public class MemoryManager
 	void free(int address)
 	{
 		tableIterator = freeSpaceTable.listIterator();
-		while(tableIterator.hasNext())
-		{
-			if(tableIterator.next().getAddress()==address)
-			{
-				freeSpaceTable.remove(tableIterator.previousIndex());
-			}
-		}
+		/*
+		 * to do:
+		 * use address and size add new node to list with address as address coming in size as 
+		 * size of job
+		 * 
+		 * */
 	}
 	
 	void memCoalesce()
