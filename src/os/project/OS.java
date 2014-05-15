@@ -1,16 +1,29 @@
 package os.project;
-import java.util.LinkedList;
+//import java.util.Collections;
+//import java.util.Iterator;
+//import java.util.List;
 
 public class OS 
 {
-	
-	LinkedList<FreeSpaceNode> freeSpaceTable;
-	FreeSpaceNode outNode;
+	public static void main(String[] args)
+	{
+		MemoryManager mManage;
+		mManage = new MemoryManager();
+		mManage.print();
+		mManage.allocate(60);		
+		mManage.print();
+		mManage.allocate(100);
+		mManage.print();
+		mManage.allocate(20);
+		mManage.free(0);
+		mManage.print();
+		mManage.free(80);
+		mManage.print();
+	}
 	
 	void startup()
 	{
-		freeSpaceTable = new LinkedList<FreeSpaceNode>();
-		freeSpaceTable.add(new FreeSpaceNode(0,100));
+		//mManage = new MemoryManager();
 	}
 	
 	void Crint(int a[],int p[])
@@ -38,38 +51,6 @@ public class OS
 		
 	}
 	
-	/*
-	 * 
-	 * */
-	void memManage(int sizeOfJob)
-	{
-		int sentinal = 1;
-		/*
-		 * loop through each element to check for first free space that job can be placed
-		 * until end of table. 
-		 * */
-		while(freeSpaceTable.peek().getSize()<sizeOfJob&&sentinal<=freeSpaceTable.size())
-		{
-			freeSpaceTable.push(freeSpaceTable.pop());
-			sentinal++;
-		}
-				
-		if(sentinal<freeSpaceTable.size())
-		{
-			/*split memory block giving the job memory
-			 * and placing the rest back into the table
-			 **/
-			memSplit(sizeOfJob);
-		}
-		else
-		{
-			//choose algorithm to replace job
-			//call to swapper to swap job drum->mem 
-		}
-		
-		memCoalesce();
-	}
-	
 	void cpuSchedule()
 	{
 		
@@ -89,15 +70,8 @@ public class OS
 		
 	}
 
-	void memCoalesce()
-	{
-		
-	}
+
 	
-	void memSplit(int sizeOfJob)
-	{
-		outNode = freeSpaceTable.remove();
-		freeSpaceTable.add(new FreeSpaceNode(outNode.getAddress()+sizeOfJob,outNode.getSize()-sizeOfJob));
-	}
+	
 	
 }
