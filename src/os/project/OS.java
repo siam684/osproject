@@ -9,6 +9,9 @@ public class OS
 	{
 		MemoryManager mManage;
 		mManage = new MemoryManager();
+		
+		
+		
 		mManage.allocate(60);
 		mManage.allocate(20);
 		mManage.allocate(10);

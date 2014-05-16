@@ -37,7 +37,8 @@ public class MemoryManager
 			if(tempNode.getSize()>sizeOfJob)
 			{
 				found = true;
-				memSplit(sizeOfJob,freeSpaceTable.indexOf(tempNode));				
+				memSplit(sizeOfJob,freeSpaceTable.indexOf(tempNode));
+				Collections.sort(freeSpaceTable);
 				break;
 			}
 			else
@@ -57,9 +58,9 @@ public class MemoryManager
 	
 	void free(int address, int size)
 	{	
-		freeSpaceTable.add(new FreeSpaceNode(address,size));
-		Collections.sort(freeSpaceTable);
+		freeSpaceTable.add(new FreeSpaceNode(address,size));		
 		memCoalesce(freeSpaceTable.size()-1);
+		Collections.sort(freeSpaceTable);
 	}
 	
 	void memCoalesce(int size)
@@ -77,9 +78,7 @@ public class MemoryManager
 				freeSpaceTable.get(size-1).setSize(sizeOfadjacent+freeSpaceTable.get(size-1).getSize());
 				memCoalesce(size-1);
 			}
-		}			
-		
-		
+		}
 	}
 	
 	void memSplit(int sizeOfJob, int index)
