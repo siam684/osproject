@@ -9,9 +9,6 @@ public class OS
 	{
 		MemoryManager mManage;
 		mManage = new MemoryManager();
-		
-		
-		
 		mManage.allocate(60);
 		mManage.allocate(20);
 		mManage.allocate(10);
@@ -19,12 +16,22 @@ public class OS
 		System.out.println();
 		mManage.print();
 		mManage.free(60,20);
+		
 		System.out.println();
 		mManage.print();
+		
 		mManage.free(80,10);
 		System.out.println();
 		mManage.print();
 		
+		
+		mManage.free(40, 20);
+		System.out.println();
+		mManage.print();
+		
+		mManage.free(0, 40);
+		System.out.println();
+		mManage.print();
 	}
 	
 	void startup()
