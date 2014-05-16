@@ -1,5 +1,5 @@
 package os.project;
-//import java.util.Collections;
+
 //import java.util.Iterator;
 //import java.util.List;
 
@@ -9,16 +9,19 @@ public class OS
 	{
 		MemoryManager mManage;
 		mManage = new MemoryManager();
-		mManage.print();
-		mManage.allocate(60);		
-		mManage.print();
-		mManage.allocate(100);
-		mManage.print();
+		mManage.allocate(60);
 		mManage.allocate(20);
-		mManage.free(0);
+		mManage.allocate(10);
+		
+		System.out.println();
 		mManage.print();
-		mManage.free(80);
+		mManage.free(60,20);
+		System.out.println();
 		mManage.print();
+		mManage.free(80,10);
+		System.out.println();
+		mManage.print();
+		
 	}
 	
 	void startup()

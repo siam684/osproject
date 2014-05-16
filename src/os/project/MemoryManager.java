@@ -1,7 +1,7 @@
 package os.project;
 import java.util.LinkedList;
 import java.util.ListIterator;
-
+import java.util.Collections;
 public class MemoryManager
 {
 	LinkedList<FreeSpaceNode> freeSpaceTable;
@@ -55,47 +55,31 @@ public class MemoryManager
 		
 	}
 	
-	void free(int address)
-	{
-		tableIterator = freeSpaceTable.listIterator();
-		/*
-		 * to do:
-		 * use address and size add new node to list with address as address coming in size as 
-		 * size of job
-		 * 
-		 * */
+	void free(int address, int size)
+	{	
+		freeSpaceTable.add(new FreeSpaceNode(address,size));
+		Collections.sort(freeSpaceTable);
+		memCoalesce(freeSpaceTable.size()-1);
 	}
 	
-	void memCoalesce()
+	void memCoalesce(int size)
 	{
-		tableIterator = freeSpaceTable.listIterator();
-		int indexOfnextNode, indexOfPreviousNode, indexOfCurentNode;
-		while(tableIterator.hasNext())
+		if(size<=1)
 		{
-			tempNode = tableIterator.next();
-			indexOfCurentNode = freeSpaceTable.indexOf(tempNode);
-			if(tableIterator.hasNext())
-			{
-				indexOfnextNode = freeSpaceTable.indexOf(tempNode)+1;
-				if(tempNode.getAddress()+tempNode.getSize()==freeSpaceTable.get(indexOfnextNode).getAddress())
-				{
-					freeSpaceTable.get(indexOfCurentNode).setSize(freeSpaceTable.get(indexOfnextNode).getSize()+
-																  freeSpaceTable.get(indexOfCurentNode).getSize());
-					freeSpaceTable.remove(indexOfnextNode);
-				}				
-			}
-			
-			if(tableIterator.hasPrevious())
-			{
-				indexOfPreviousNode = freeSpaceTable.indexOf(tempNode)-1;
-				if(freeSpaceTable.get(indexOfPreviousNode+1).getAddress()+freeSpaceTable.get(indexOfPreviousNode+1).getSize()==tempNode.getAddress())
-				{
-					freeSpaceTable.get(indexOfPreviousNode).setSize(freeSpaceTable.get(indexOfPreviousNode).getSize()+
-							  									  freeSpaceTable.get(indexOfCurentNode).getSize());
-					freeSpaceTable.remove(indexOfCurentNode);
-				}
-			}
+			return;
 		}
+		else
+		{
+			if(freeSpaceTable.get(size-1).getAddress()+freeSpaceTable.get(size-1).getSize()==freeSpaceTable.get(size).getAddress())
+			{
+				int sizeOfadjacent = freeSpaceTable.get(size).getSize();
+				freeSpaceTable.remove(size);
+				freeSpaceTable.get(size-1).setSize(sizeOfadjacent+freeSpaceTable.get(size-1).getSize());
+				memCoalesce(size-1);
+			}
+		}			
+		
+		
 	}
 	
 	void memSplit(int sizeOfJob, int index)
@@ -103,7 +87,7 @@ public class MemoryManager
 		tempNode = freeSpaceTable.remove(index);
 		
 		freeSpaceTable.add(new FreeSpaceNode(tempNode.getAddress()+sizeOfJob,tempNode.getSize()-sizeOfJob));
-		memCoalesce();		
+		memCoalesce(freeSpaceTable.size()-1);		
 	}
 	
 	void print()
