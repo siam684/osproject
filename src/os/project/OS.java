@@ -1,88 +1,30 @@
 package os.project;
 
-import java.util.Scanner;
+
 import java.util.LinkedList;
 //import java.util.Iterator;
 //import java.util.List;
 
 public class OS 
 {
-	
-	//LinkedList<ProcessControlBlock> jobTable;
-	//MemoryManager mManage;
-	
-public static void main(String[] args)
-	{
-		MemoryManager mManage;
-		mManage = new MemoryManager();
-		
-		Scanner in = new Scanner(System.in);
-		int input2;
-		int input3;
-//		while(input!=0)
-//		{
-//			System.out.println("enter -1. free, -2.allocate");
-//			input = in.nextInt();
-//			
-//			if(input==-2)
-//			{
-//				System.out.println("enter allocate size");
-//				input2 = in.nextInt();
-//				System.out.print(mManage.allocate(input2));
-//			}
-//			
-//			if(input==-1)
-//			{
-//				System.out.println("enter free address");				
-//				input2 = in.nextInt();
-//				
-//				System.out.println("enter free address");				
-//				input3 = in.nextInt();
-//				
-//				mManage.free(input2,input3);
-//				
-//			}
-//			System.out.println();
-//			mManage.print();
-//		}
-		
-		for(int x= 0;x<=8;x++)
-		{
-			System.out.print("Size:\t\t");
-			input2 = in.nextInt();
-			System.out.println("Address:\t"+ mManage.allocate(input2));
-			System.out.println("Table: ");
-			mManage.print();
-			System.out.println("");	
-		}
-		
-		for(int x= 0;x<=8;x++)
-		{
-			System.out.print("free address:\t");				
-			input2 = in.nextInt();
-			
-			System.out.print("free size:\t");				
-			input3 = in.nextInt();
-			
-			mManage.free(input2,input3);
-			System.out.println("Table: ");
-			mManage.print();
-			System.out.println("");	
-		}
-		
-		
-		
-		in.close();
-	}
+
+	LinkedList<FreeSpaceNode> freeSpaceTable;
+	LinkedList<ProcessControlBlock> jobTable;
+	LinkedList<ProcessControlBlock> readyQueue;
+	LinkedList<ProcessControlBlock> iOqueue;
 	
 	
-	/*SOS calles this first
+	
+	/*SOS calls this first
 	 * initialize variables
 	 * */
 	void startup()
 	{
-		//mManage = new MemoryManager();
-		//jobTable = new LinkedList<ProcessControlBlock>(); //contains all info of jobs in system
+		freeSpaceTable = new LinkedList<FreeSpaceNode>();
+		freeSpaceTable.add(new FreeSpaceNode(0,99));
+		jobTable = new LinkedList<ProcessControlBlock>(); //contains all info of jobs in system
+		readyQueue = new LinkedList<ProcessControlBlock>();
+		iOqueue = new LinkedList<ProcessControlBlock>();
 	}
 	
 	
@@ -90,13 +32,31 @@ public static void main(String[] args)
 	 * idicates the arrival of new job on drum
 	 * sos spooler sends new job to system
 	 * p[1] = job number
-	 * p[2] = priority
+	 * p[2] = priority 1.highest 5.lowest
 	 * p[3] = job size
 	 * p[4] = max cpu time allowed
 	 * p[5] = current time
 	 * */
 	void Crint(int a[],int p[])
 	{
+		
+		/* if there is a cpu that has cpu bookkeep
+		 *  - if a[] = 2
+		 *  	- save process that has cpu
+		 *  		- save state to pcb
+		 * else 
+		 * call swapper to put jobs from job table to in memory
+		 * 	- create new pcb with p[] data
+		 *  - put new pcb in jobtable
+		 *  - call swapper to look through job table to find a job to put into memory
+		 *  
+		 * add job to ready queue
+		 * call dispatcher
+		 * 
+		 * */
+		
+		
+		
 		//call swapper to put job in memory
 		//put job in ready queue, maybe do that in swapper?
 		
@@ -180,7 +140,7 @@ public static void main(String[] args)
 	 * p[5] = current time
 	 * a[] = 5 = job has terminated
 	 * a[] = 6 = job request disk i/o
-	 * a[] = 7 = job wants to be blocked until  i/o requests completed(prevented from running on cpu)
+	 * a[] = 7 = job wants to be blocked until  i/o requests completed (prevented from running on cpu)
 	 * 
 	 * if job requests to be terminated it while doing i/o it must first finish i/o
 	 * instead set kill bit
@@ -203,11 +163,7 @@ public static void main(String[] args)
 		 * */
 		//leave each interrupt with return statement?
 	}
-	
-	void cpuSchedule()
-	{
-		//leave each interrupt with return statement?
-	}
+
 	/*
 	 * 
 	 * sets cpu registers before context switch
@@ -241,41 +197,26 @@ public static void main(String[] args)
 	 * handles drum interrupts?
 	 * call siodrum to swap the job into memory
 	 * may need to call swap jobs out to make room for the that you want to swap in
+	 * 
+	 * siodrum: start a drum transfer (swap)
+	 * 		void siodrum(int jobnum,int jobsize, int startcoreaddress(mem),int transfer direction)
+	 * 				direction:0= drum to mem, 1= mem to drum
 	 * */
-	void swap()
+	void swap(int direction)
 	{
-		
+		/*
+		 * look through job table for job that is not in memory
+		 * 	- check for state is new
+		 * use memory manager to allocate memory
+		 * 	- send job size
+		 * 	-if space found			
+		 * 		- put job in memory
+		 * 		- save address in pcb
+		 * 		- call siodrum with 0;
+		 * 		
+		 *  -else
+		 *  	- 
+		 * */
 	}
-
 }
 
-/* 
- * siodisk: start disk transfer
- * 		void siodisk(int jobNum)
- * 
- * siodrum: start a drum transfer (swap)
- * 		void siodrum(int jobnum,int jobsize, int startcoreaddress(mem),int transfer direction)
- * 				direction:0= drum to mem, 1= mem to drum
- * 
- * 0. os sleeping
- * 1. iterrupt happens -  interrupts are disabled
- * 2. os keeps track of interrupted job (bookkeeping)
- * 3. os handles events signaled by interrupts (differs per interrupt)
- * 4. os schedules next job
- * 5. os dispatches job
- * 6. os sleeps
- * 
- * before return to os from each interrupt
- * 	- check if there is room in memory to swap in a new job from drum
- *  - check if jobs ready to run, if so schedule the job
- *  
- *  if a job has outstanding disk i/o requests and no requests are being serviced by disk(job in i/o queue) os can decided to leave 
- *  the job in meory or swap it out to drum but before os inituates an siodisk for any of the jobs i/o requests, the job must be in memory
- *  
- *  bookeeping: 
- *  	- when interrupt happens a running job will be terminated, it is the job of the os to make sure that information about the job that was
- *  	running is not lost
- *  	- must be done at the beginning of each interrupt handler
- *  	- os must schedule a job to run on the cpu before returning to sos
- *  
- * */

@@ -4,18 +4,17 @@ import java.util.ListIterator;
 import java.util.Collections;
 public class MemoryManager
 {
-	LinkedList<FreeSpaceNode> freeSpaceTable;
-	FreeSpaceNode tempNode;
-	ListIterator<FreeSpaceNode> tableIterator;
-	Boolean found = false;
 	
-	MemoryManager()
-	{
-		freeSpaceTable = new LinkedList<FreeSpaceNode>();
-		freeSpaceTable.add(new FreeSpaceNode(0,99));
-	}
+	private static FreeSpaceNode tempNode;
+	private static ListIterator<FreeSpaceNode> tableIterator;
 	
-	int allocate(int sizeOfJob)
+//	MemoryManager()
+//	{
+//		freeSpaceTable = new LinkedList<FreeSpaceNode>();
+//		freeSpaceTable.add(new FreeSpaceNode(0,99));
+//	}
+//	
+	public static int allocate(int sizeOfJob,LinkedList<FreeSpaceNode> freeSpaceTable)
 	{
 		/*
 		 * loop through each element to check for first free space that job can be placed
@@ -33,9 +32,8 @@ public class MemoryManager
 			 * */
 			if(tempNode.getSize()>=sizeOfJob)
 			{
-				found = true;
 				Collections.sort(freeSpaceTable);
-				address =  memSplit(sizeOfJob,freeSpaceTable.indexOf(tempNode));
+				address =  memSplit(sizeOfJob,freeSpaceTable.indexOf(tempNode),freeSpaceTable);
 			}
 			else
 			{
@@ -47,14 +45,14 @@ public class MemoryManager
 		
 	}
 	
-	void free(int address, int size)
+	public static void free(int address, int size,LinkedList<FreeSpaceNode> freeSpaceTable)
 	{	
 		freeSpaceTable.add(new FreeSpaceNode(address,size));
 		Collections.sort(freeSpaceTable);
-		memCoalesce();
+		memCoalesce(freeSpaceTable);
 	}
 	
-	void memCoalesce()
+	private static void memCoalesce(LinkedList<FreeSpaceNode> freeSpaceTable)
 	{
 		int size = freeSpaceTable.size()-1;
 		while((size>0))
@@ -69,14 +67,14 @@ public class MemoryManager
 		}
 	}
 	
-	int memSplit(int sizeOfJob, int index)
+	private static int memSplit(int sizeOfJob, int index,LinkedList<FreeSpaceNode> freeSpaceTable)
 	{
 		tempNode = freeSpaceTable.remove(index);		
 		freeSpaceTable.add(new FreeSpaceNode(tempNode.getAddress()+sizeOfJob,tempNode.getSize()-sizeOfJob));
 		return tempNode.getAddress();
 	}
 	
-	void print()
+	public static void print(LinkedList<FreeSpaceNode> freeSpaceTable)
 	{
 		tableIterator = freeSpaceTable.listIterator();
 		while(tableIterator.hasNext())

@@ -1,15 +1,16 @@
 package os.project;
 
-public class ProcessControlBlock
+public class ProcessControlBlock implements Comparable<ProcessControlBlock>
 {
-	int p[];
-	int memAddress, jobNum, jobSize, currentTime, priority, maxCpuTime;
+	//int p[];
+	int memAddress, jobNum, jobSize, currentTime, priority, maxCpuTime, state;
 	boolean isDoingIO, killBit, isBlocked; //kill bit used if job is to be terminated but still doing i/o
 	
 	ProcessControlBlock()
 	{
-		p = null;
+		//p = null;
 		memAddress = -1;
+		state = 0; //states 0.unassigned 1.new 2.ready 3.running 4.waiting on i/o 5.terminated
 		isDoingIO = false;
 		killBit = false;
 		isBlocked = false;
@@ -20,10 +21,11 @@ public class ProcessControlBlock
 		this.maxCpuTime = 0;
 	}
 	
-	ProcessControlBlock(int p[],int memAddress,int jobNum, int jobSize, int currentTime, int priority, int maxCpuTime)
+	ProcessControlBlock(int jobNum, int jobSize, int currentTime, int priority, int maxCpuTime)
 	{
-		p = null;
+		//p = null;
 		memAddress = -1;
+		state = 0;
 		isDoingIO = false;
 		killBit = false;
 		isBlocked = false;
@@ -32,6 +34,16 @@ public class ProcessControlBlock
 		this.currentTime = currentTime;
 		this.priority = priority;
 		this.maxCpuTime = maxCpuTime;
+	}
+	
+	void setState(int state)
+	{
+		this.state = state;
+	}
+	
+	int getState()
+	{
+		return state;
 	}
 	
 	boolean isBlocked()
@@ -64,15 +76,15 @@ public class ProcessControlBlock
 		memAddress = mAddress;
 	}
 	
-	int[] getP()
-	{
-		return p;
-	}
-	void setP(int incP[])
-	{
-		p = incP.clone();
-	}
-	
+//	int[] getP()
+//	{
+//		return p;
+//	}
+//	void setP(int incP[])
+//	{
+//		p = incP.clone();
+//	}
+//	
 	void setJobNum(int jobNum)
 	{
 		this.jobNum = jobNum;
@@ -121,6 +133,22 @@ public class ProcessControlBlock
 	int getMaxCpuTime()
 	{
 		return maxCpuTime;
+	}
+	
+	public int compareTo(ProcessControlBlock node) 
+	{
+		if (this.priority > node.priority) 
+		{
+			return 1;
+		} 
+		else if (this.priority == node.priority) 
+		{
+			return 0;
+		} 
+		else 
+		{
+			return -1;
+		}
 	}
 	
 }
