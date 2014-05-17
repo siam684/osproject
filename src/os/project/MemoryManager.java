@@ -12,18 +12,16 @@ public class MemoryManager
 	MemoryManager()
 	{
 		freeSpaceTable = new LinkedList<FreeSpaceNode>();
-		freeSpaceTable.add(new FreeSpaceNode(0,100));
+		freeSpaceTable.add(new FreeSpaceNode(0,99));
 	}
 	
-	void allocate(int sizeOfJob)
+	int allocate(int sizeOfJob)
 	{
-		//Collections.sort(freeSpaceTable);
-		
 		/*
 		 * loop through each element to check for first free space that job can be placed
 		 * until end of table. 
 		 * */
-		
+		int address= -2;
 		tableIterator = freeSpaceTable.listIterator();
 		while(tableIterator.hasNext())
 		{
@@ -33,26 +31,19 @@ public class MemoryManager
 			 * if found, send size of job and index of node to memSplit
 			 * to allocate memory and adjust free space table
 			 * */
-			
-			if(tempNode.getSize()>sizeOfJob)
+			if(tempNode.getSize()>=sizeOfJob)
 			{
 				found = true;
 				Collections.sort(freeSpaceTable);
-				memSplit(sizeOfJob,freeSpaceTable.indexOf(tempNode));
-				break;
+				address =  memSplit(sizeOfJob,freeSpaceTable.indexOf(tempNode));
 			}
 			else
 			{
-				found = false;
+				System.out.println("no space avaliable");
+				address = -1;
 			}
 		}
-		
-		if(!found)
-		{
-			System.out.println("no space avaliable");
-			//use algo to find witch job to swap out
-			//call swapper to send job to drum from mem
-		}
+		return address;
 		
 	}
 	
@@ -60,33 +51,29 @@ public class MemoryManager
 	{	
 		freeSpaceTable.add(new FreeSpaceNode(address,size));
 		Collections.sort(freeSpaceTable);
-		memCoalesce(freeSpaceTable.size()-1);
+		memCoalesce();
 	}
 	
-	void memCoalesce(int size)
+	void memCoalesce()
 	{
-		if(size<1)
-		{
-				return;
-		}
-		else
+		int size = freeSpaceTable.size()-1;
+		while((size>0))
 		{
 			if(freeSpaceTable.get(size-1).getAddress()+freeSpaceTable.get(size-1).getSize()==freeSpaceTable.get(size).getAddress())
 			{
 				int sizeOfadjacent = freeSpaceTable.get(size).getSize();
 				freeSpaceTable.remove(size);
 				freeSpaceTable.get(size-1).setSize(sizeOfadjacent+freeSpaceTable.get(size-1).getSize());
-				memCoalesce(size-1);
 			}
+			size--;
 		}
 	}
 	
-	void memSplit(int sizeOfJob, int index)
+	int memSplit(int sizeOfJob, int index)
 	{
-		tempNode = freeSpaceTable.remove(index);
-		
+		tempNode = freeSpaceTable.remove(index);		
 		freeSpaceTable.add(new FreeSpaceNode(tempNode.getAddress()+sizeOfJob,tempNode.getSize()-sizeOfJob));
-		memCoalesce(freeSpaceTable.size()-1);		
+		return tempNode.getAddress();
 	}
 	
 	void print()
@@ -94,8 +81,7 @@ public class MemoryManager
 		tableIterator = freeSpaceTable.listIterator();
 		while(tableIterator.hasNext())
 		{
-			//tempNode = ;
-			System.out.println(" Address: "+ tableIterator.next().getAddress() + " Size: " + tableIterator.previous().getSize());
+			System.out.println("Address: "+ tableIterator.next().getAddress() + " Size: " + tableIterator.previous().getSize());
 			tableIterator.next();
 		}
 	}
