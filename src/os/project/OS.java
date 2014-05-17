@@ -212,8 +212,7 @@ public class OS
 		 * 	-if space found			
 		 * 		- put job in memory
 		 * 		- save address in pcb
-		 * 		- call siodrum with 0;
-		 * 		
+		 * 		- call siodrum with 0
 		 *  -else
 		 *  	- 
 		 * */
